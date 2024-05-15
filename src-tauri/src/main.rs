@@ -62,6 +62,17 @@ fn create_file(filename: String, content: String) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn delete_file(filename: String) -> Result<String, String> {
+    let app_dir = APP_DIR.lock().unwrap();
+    if let Some(dir) = &*app_dir {
+        let mut file_path = dir.clone();
+        file_path.push(filename);
+        fs::remove_file(file_path).map_err(|e| e.to_string())?;
+    }
+    Ok(String::from("File deleted successfully"))
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|_| {
@@ -75,7 +86,12 @@ fn main() {
             }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet, get_files, create_file])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            get_files,
+            create_file,
+            delete_file
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

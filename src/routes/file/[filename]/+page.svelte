@@ -40,7 +40,7 @@
 	}
 </script>
 
-<Card.Root class="mx-5">
+<Card.Root>
 	{#if file}
 		<Header {isEdited} {isEditing} {setPreview} filename={file.filename} />
 		<Card.Content>

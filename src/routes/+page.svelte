@@ -8,7 +8,7 @@
 	$: systemFiles = $files;
 </script>
 
-<div class="px-5 lg:max-w-[70%] mx-auto">
+<div class="">
 	<Card.Root>
 		<Card.Header>
 			<div class="flex justify-between items-center">
@@ -21,6 +21,11 @@
 			{#each systemFiles as { filename, content }}
 				<File {filename} />
 			{/each}
+			{#if systemFiles.length < 1}
+				<p class="font-thin">
+					There is nothing here yet, create a new file to start using notionless
+				</p>
+			{/if}
 		</Card.Content>
 	</Card.Root>
 </div>

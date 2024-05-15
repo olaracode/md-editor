@@ -20,6 +20,14 @@
 			.then((res) => {
 				toast(`Archivo ${filename} borrado con exito`);
 				goto('/');
+				getFiles()
+					.then((res) => {
+						console.log(res);
+						files.set(res);
+					})
+					.catch((e) => {
+						toast('Ha ocurrido un error buscando los archivos actualizados');
+					});
 				return;
 			})
 			.catch((e) => {

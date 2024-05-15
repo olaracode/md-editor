@@ -4,7 +4,8 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Plus } from 'lucide-svelte';
 	import File from '$lib/components/blocks/File.svelte';
-	let systemFiles = $files;
+	import AddFile from '$lib/components/AddFile.svelte';
+	$: systemFiles = $files;
 </script>
 
 <div class="px-5 lg:max-w-[70%] mx-auto">
@@ -12,7 +13,7 @@
 		<Card.Header>
 			<div class="flex justify-between items-center">
 				<Card.Title>Notionless files</Card.Title>
-				<Button><Plus />New</Button>
+				<AddFile />
 			</div>
 			<Card.Description>Archivos {systemFiles.length}</Card.Description>
 		</Card.Header>

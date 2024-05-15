@@ -1,18 +1,62 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
+	import { invoke } from '@tauri-apps/api/tauri';
 	import { Footer } from '$lib/components/ui/card';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button';
+	import { getFiles } from '../../../../../stores/files';
+	import { files } from '../../../../../stores/files';
+
 	export let filename = '';
+	export let content = '';
 	export let isEdited;
 	export let restoreFile: () => void;
 
 	function deleteFile() {
-		console.log(filename);
+		invoke('delete_file', {
+			filename
+		})
+			.then((res) => {
+				toast(`Archivo ${filename} borrado con exito`);
+				goto('/');
+				return;
+			})
+			.catch((e) => {
+				if (typeof e == 'string') {
+					toast(`Ha ocurrido un error ${e}`);
+					return;
+				}
+				toast('Ha ocurrido un error intentelo nuevamente');
+			});
 		goto('/');
 	}
 
-	function saveFile() {}
+	function saveFile() {
+		invoke('create_file', {
+			filename,
+			content
+		})
+			.then((res) => {
+				toast('Archivo guardado con exito!');
+				getFiles()
+					.then((res) => {
+						console.log(res);
+						files.set(res);
+					})
+					.catch((e) => {
+						toast('Ha ocurrido un error buscando los archivos actualizados');
+					});
+			})
+			.catch((e) => {
+				if (typeof e === 'string') {
+					toast(`Ha ocurrido un error: ${e}`);
+					return;
+				} else {
+					toast('Ha ocurrido un error inesperado');
+				}
+			});
+	}
 </script>
 
 <Footer class="justify-between">
@@ -28,7 +72,7 @@
 				</AlertDialog.Header>
 				<AlertDialog.Footer>
 					<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-					<AlertDialog.Action on:click={restoreFile}>Continue</AlertDialog.Action>
+					<AlertDialog.Action on:click={saveFile}>Continue</AlertDialog.Action>
 				</AlertDialog.Footer>
 			</AlertDialog.Content>
 		</AlertDialog.Root>

@@ -1,66 +1,46 @@
 <script lang="ts">
-	// @ts-ignore
-	import MarkdownIt from 'markdown-it';
-	import hljs from 'highlight.js';
-	import 'highlight.js/styles/default.css';
+	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Textarea } from '$lib/components/ui/textarea';
+	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
+	import { Header, MarkDown, EditorActions } from '$lib/components/blocks/editor/md';
 	export let data;
+
 	let { file } = data;
 
-	let isPreview = true;
+	let isEditing = false;
+	$: isEdited = markdownInput != file?.content;
 	function setPreview() {
-		isPreview = !isPreview;
+		isEditing = !isEditing;
 	}
 
-	$: isEdited = markdownInput != file?.content;
-
-	let md = new MarkdownIt({
-		highlight: function (str: string, lang: string) {
-			if (lang && hljs.getLanguage(lang)) {
-				try {
-					return hljs.highlight(str, { language: lang }).value;
-				} catch (__) {}
-			}
-
-			return ''; // use external default escaping
+	function restoreFile() {
+		if (file) {
+			markdownInput = file?.content;
 		}
-	});
+	}
 
 	let markdownInput = file ? file.content : '';
-	let htmlOutput = file ? file.content : '';
-	// @ts-ignore
-	$: htmlOutput = md.render(markdownInput);
+	function parseTextArea(e: Event) {
+		const target = e.target as HTMLTextAreaElement;
+		if (target) {
+			markdownInput = target.value.replaceAll(/[\u201C\u201D]/g, '"');
+		}
+	}
 </script>
 
-<div class="mx-5 h-[80vh]">
+<Card.Root class="mx-5">
 	{#if file}
-		<div class="md:flex justify-between">
-			<div>
-				<h1 class="text-lg">
-					File: <span class="font-bold">{file.filename}</span>
-					{#if isEdited}
-						<span class="text-red-500 text-sm"> (edited) </span>
-					{/if}
-				</h1>
-			</div>
-			<div class="flex">
-				<button on:click={setPreview}>
-					<span class={`${isPreview ? 'text-amber-600' : 'text-emerald-500'} hover:underline`}>
-						Change to {!isPreview ? 'Preview Mode' : 'Edit Mode'}
-					</span>
-				</button>
-			</div>
-		</div>
-		{#if isPreview}
-			<div class="mt-4">
-				{@html htmlOutput}
-			</div>
-		{:else}
-			<textarea
-				bind:value={markdownInput}
-				class="w-full h-full bg-slate-900 p-5"
-				on:change={(e) =>
-					e.target && (e.target.value = e.target.value.replace(/[\u201C\u201D]/g, '"'))}
-			></textarea>
-		{/if}
+		<Header {isEdited} {isEditing} {setPreview} filename={file.filename} />
+		<Card.Content>
+			<ScrollArea class="h-[65vh]">
+				{#if !isEditing}
+					<MarkDown {markdownInput} />
+				{:else}
+					<Textarea class="h-[75vh]" bind:value={markdownInput} on:input={parseTextArea} />
+				{/if}
+			</ScrollArea>
+		</Card.Content>
+		<EditorActions {isEdited} {restoreFile} filename={file.filename} />
 	{/if}
-</div>
+</Card.Root>

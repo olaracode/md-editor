@@ -16,7 +16,7 @@
 			</div>
 			<Card.Description>Archivos {systemFiles.length}</Card.Description>
 		</Card.Header>
-		<Card.Content>
+		<Card.Content class="grid gap-2">
 			{#each systemFiles as { filename, content }}
 				<File {filename} />
 			{/each}

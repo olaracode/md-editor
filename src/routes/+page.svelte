@@ -1,21 +1,25 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { files } from '../stores/files';
+	import * as Card from '$lib/components/ui/card';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Plus } from 'lucide-svelte';
+	import File from '$lib/components/blocks/File.svelte';
 	let systemFiles = $files;
 </script>
 
-<h1 class="text-center">Notionless files</h1>
-
-<div class="m-5 p-5 bg-slate-900">
-	{#each systemFiles as file}
-		<button
-			type="button"
-			class="w-full text-start border p-2 border-slate-400 rounded-md"
-			on:click={() => goto(`/file/${file.filename}`)}
-		>
-			<h2>
-				{file.filename}
-			</h2>
-		</button>
-	{/each}
+<div class="px-5 lg:max-w-[70%] mx-auto">
+	<Card.Root>
+		<Card.Header>
+			<div class="flex justify-between items-center">
+				<Card.Title>Notionless files</Card.Title>
+				<Button><Plus />New</Button>
+			</div>
+			<Card.Description>Archivos {systemFiles.length}</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			{#each systemFiles as { filename, content }}
+				<File {filename} />
+			{/each}
+		</Card.Content>
+	</Card.Root>
 </div>

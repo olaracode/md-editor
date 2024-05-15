@@ -55,7 +55,12 @@
 				{@html htmlOutput}
 			</div>
 		{:else}
-			<textarea bind:value={markdownInput} class="w-full h-full bg-slate-900 p-5"></textarea>
+			<textarea
+				bind:value={markdownInput}
+				class="w-full h-full bg-slate-900 p-5"
+				on:change={(e) =>
+					e.target && (e.target.value = e.target.value.replace(/[\u201C\u201D]/g, '"'))}
+			></textarea>
 		{/if}
 	{/if}
 </div>

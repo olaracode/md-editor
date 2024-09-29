@@ -19,6 +19,6 @@
 	$: htmlOutput = md.render(markdownInput);
 </script>
 
-<div>
+<div class="prose max-w-none dark:prose-dark">
 	{@html htmlOutput}
 </div>

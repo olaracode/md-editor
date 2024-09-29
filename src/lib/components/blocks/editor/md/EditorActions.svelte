@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { invoke } from '@tauri-apps/api/tauri';
@@ -12,6 +13,13 @@
 	export let content = '';
 	export let isEdited;
 	export let restoreFile: () => void;
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+			event.preventDefault(); // Prevent the browser's default save action
+			saveFile();
+		}
+	}
 
 	function deleteFile() {
 		invoke('delete_file', {
@@ -65,6 +73,12 @@
 				}
 			});
 	}
+	onMount(() => {
+		window.addEventListener('keydown', handleKeyDown);
+	});
+	onDestroy(() => {
+		window.removeEventListener('keydown', handleKeyDown);
+	});
 </script>
 
 <Footer class="justify-between">

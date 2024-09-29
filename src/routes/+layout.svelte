@@ -6,6 +6,6 @@
 
 <Toaster />
 <Navbar />
-<div class="overflow-y-hidden py-5 lg:max-w-[70%] mx-auto">
+<div class="overflow-y-hidden py-5 lg:max-w-[70%] mx-auto dark">
 	<slot />
 </div>
